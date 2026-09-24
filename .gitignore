@@ -23,3 +23,6 @@ data/*.csv
 
 # Keep trained artifacts committed for instant/reliable deploys:
 # ml/artifacts/*.pkl and metrics/snapshot ARE tracked on purpose.
+
+# TS build info
+frontend/tsconfig.tsbuildinfo
