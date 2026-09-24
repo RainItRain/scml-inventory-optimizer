@@ -64,10 +64,8 @@ def main() -> None:
     y_train, y_test = y[train_mask], y[test_mask]
     print(f"Train: {len(X_train):,} (<= {cutoff.date()})  Test: {len(X_test):,} (> {cutoff.date()})")
 
-    model = RandomForestRegressor(
-        n_estimators=150, max_depth=14, min_samples_leaf=8,
-        random_state=42, n_jobs=-1,
-    )
+    rf_params = dict(n_estimators=150, max_depth=14, min_samples_leaf=8)
+    model = RandomForestRegressor(**rf_params, random_state=42, n_jobs=-1)
     model.fit(X_train, y_train)
 
     y_pred = model.predict(X_test)
@@ -111,7 +109,8 @@ def main() -> None:
         "mape": round(mape, 2), "r2": round(r2, 3),
         "train_rows": int(len(X_train)), "test_rows": int(len(X_test)),
         "n_features": len(feat_cols), "cutoff_date": str(cutoff.date()),
-        "model": "RandomForestRegressor(n_estimators=200, max_depth=16)",
+        "model": f"RandomForestRegressor(n_estimators={rf_params['n_estimators']}, "
+                 f"max_depth={rf_params['max_depth']})",
         "kpis": kpis, "feature_importance": feat_importance,
     }
     (ARTIFACT_DIR / "metrics.json").write_text(json.dumps(metrics, indent=2))

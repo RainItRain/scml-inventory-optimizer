@@ -7,7 +7,7 @@
   "test_rows": 14300,
   "n_features": 29,
   "cutoff_date": "2023-08-10",
-  "model": "RandomForestRegressor(n_estimators=200, max_depth=16)",
+  "model": "RandomForestRegressor(n_estimators=150, max_depth=14)",
   "kpis": {
     "total_skus": 14300,
     "healthy": 11077,
