@@ -6,7 +6,7 @@ import { StatusPie, FeatureImportanceChart, MetricsPanel } from "./components/Ch
 import ReorderTable from "./components/ReorderTable";
 import Simulator from "./components/Simulator";
 
-const GITHUB_URL = "https://github.com/amanibharne/scml-inventory-optimizer";
+const GITHUB_URL = "https://github.com/RainItRain/scml-inventory-optimizer";
 
 export default function App() {
   const [metrics, setMetrics] = useState<Metrics | null>(null);
