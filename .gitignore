@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+
+# Node / frontend
+node_modules/
+frontend/dist/
+*.local
+
+# Data (regenerable via data/generate_dataset.py)
+data/*.csv
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# Keep trained artifacts committed for instant/reliable deploys:
+# ml/artifacts/*.pkl and metrics/snapshot ARE tracked on purpose.

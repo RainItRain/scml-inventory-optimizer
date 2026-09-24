@@ -1,0 +1,70 @@
+{
+  "mae": 10.15,
+  "rmse": 14.13,
+  "mape": 12.28,
+  "r2": 0.863,
+  "train_rows": 57300,
+  "test_rows": 14300,
+  "n_features": 29,
+  "cutoff_date": "2023-08-10",
+  "model": "RandomForestRegressor(n_estimators=200, max_depth=16)",
+  "kpis": {
+    "total_skus": 14300,
+    "healthy": 11077,
+    "warning": 1213,
+    "critical": 2010,
+    "total_potential_lost_revenue": 26555993.86,
+    "avg_days_of_cover": 8.5,
+    "units_to_reorder": 421551
+  },
+  "feature_importance": [
+    {
+      "feature": "lag_7",
+      "importance": 0.4279
+    },
+    {
+      "feature": "lag_14",
+      "importance": 0.197
+    },
+    {
+      "feature": "Discount",
+      "importance": 0.1339
+    },
+    {
+      "feature": "Inventory Level",
+      "importance": 0.1037
+    },
+    {
+      "feature": "rolling_mean_30",
+      "importance": 0.0462
+    },
+    {
+      "feature": "DayOfWeek",
+      "importance": 0.0197
+    },
+    {
+      "feature": "Weather Condition_Sunny",
+      "importance": 0.0153
+    },
+    {
+      "feature": "rolling_mean_7",
+      "importance": 0.0143
+    },
+    {
+      "feature": "Weather Condition_Snowy",
+      "importance": 0.0087
+    },
+    {
+      "feature": "Holiday/Promotion",
+      "importance": 0.0069
+    },
+    {
+      "feature": "WeekOfYear",
+      "importance": 0.0056
+    },
+    {
+      "feature": "Weather Condition_Rainy",
+      "importance": 0.0048
+    }
+  ]
+}

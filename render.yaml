@@ -1,0 +1,10 @@
+# Render Blueprint — one-click deploy of the single-container app.
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: scml-inventory-optimizer
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/health
+    autoDeploy: true

@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/api.ts","./src/lib.ts","./src/main.tsx","./src/components/charts.tsx","./src/components/kpis.tsx","./src/components/reordertable.tsx","./src/components/simulator.tsx"],"version":"5.9.3"}

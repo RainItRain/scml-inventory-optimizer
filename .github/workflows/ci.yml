@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ml-and-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install backend deps
+        run: pip install -r backend/requirements.txt
+
+      - name: Generate data + train model (smoke test)
+        run: |
+          python data/generate_dataset.py --stores 3 --products 8 --days 400
+          python ml/train.py
+
+      - name: API import + endpoint smoke test
+        run: |
+          cd backend
+          python -c "from app.main import app; print('API imports OK')"
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
