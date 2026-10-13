@@ -16,14 +16,20 @@ import json
 from functools import lru_cache
 from pathlib import Path
 
+import io
+
 import joblib
 import numpy as np
 import pandas as pd
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
 
+from .analyze import AnalyzeError, analyze_dataframe, sample_template_csv
 from .schemas import Metrics, SimulationRequest, SimulationResponse
+
+MAX_UPLOAD_BYTES = 25 * 1024 * 1024  # 25 MB
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 ARTIFACT_DIR = ROOT / "ml" / "artifacts"
@@ -198,6 +204,37 @@ def _ensure_loaded() -> None:
         store.load()
     except FileNotFoundError as exc:
         raise HTTPException(status_code=503, detail=str(exc))
+
+
+@app.get("/api/sample-template")
+def sample_template() -> Response:
+    """Download a small, valid example CSV showing the expected schema."""
+    csv = sample_template_csv()
+    return Response(
+        content=csv,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=sample_inventory.csv"},
+    )
+
+
+@app.post("/api/analyze")
+async def analyze(file: UploadFile = File(...)) -> dict:
+    """Train a fresh model on an uploaded CSV and return metrics + recommendations."""
+    if not file.filename or not file.filename.lower().endswith(".csv"):
+        raise HTTPException(status_code=400, detail="Please upload a .csv file.")
+    raw = await file.read()
+    if len(raw) > MAX_UPLOAD_BYTES:
+        raise HTTPException(status_code=400, detail="File too large (max 25 MB).")
+    try:
+        df = pd.read_csv(io.BytesIO(raw))
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"Could not parse CSV: {exc}")
+    try:
+        return analyze_dataframe(df)
+    except AnalyzeError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except Exception as exc:  # pragma: no cover - defensive
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {exc}")
 
 
 # Serve the built frontend if it exists (single-container deployment).

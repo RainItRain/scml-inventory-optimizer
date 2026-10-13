@@ -5,6 +5,7 @@ import Kpis from "./components/Kpis";
 import { StatusPie, FeatureImportanceChart, MetricsPanel } from "./components/Charts";
 import ReorderTable from "./components/ReorderTable";
 import Simulator from "./components/Simulator";
+import DataUpload from "./components/DataUpload";
 
 const GITHUB_URL = "https://github.com/RainItRain/scml-inventory-optimizer";
 
@@ -89,6 +90,13 @@ export default function App() {
 
             <section>
               <Simulator />
+            </section>
+
+            <section>
+              <h2 className="text-sm font-semibold text-slate-300 mb-3">
+                Bring Your Own Dataset
+              </h2>
+              <DataUpload />
             </section>
 
             <section>

@@ -71,6 +71,10 @@ export interface SimulationResponse {
   potential_lost_revenue: number;
 }
 
+export interface AnalyzeResult extends Metrics {
+  recommendations: InventoryItem[];
+}
+
 async function getJSON<T>(url: string): Promise<T> {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
@@ -104,4 +108,15 @@ export const api = {
     if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
     return res.json();
   },
+  analyze: async (file: File): Promise<AnalyzeResult> => {
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch("/api/analyze", { method: "POST", body: fd });
+    if (!res.ok) {
+      const body = await res.json().catch(() => null);
+      throw new Error(body?.detail || `${res.status} ${res.statusText}`);
+    }
+    return res.json();
+  },
+  sampleTemplateUrl: "/api/sample-template",
 };
