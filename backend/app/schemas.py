@@ -67,6 +67,16 @@ class SimulationRequest(BaseModel):
     season: str = "Summer"
 
 
+class InsightRequest(BaseModel):
+    """Snapshot stats sent to the insights endpoint for a narrative briefing."""
+    r2: float = 0.0
+    mape: float = 0.0
+    kpis: dict = Field(default_factory=dict)
+    feature_importance: list[dict] = Field(default_factory=list)
+    recommendations: list[dict] = Field(default_factory=list)
+    label: str = "the dataset"
+
+
 class SimulationResponse(BaseModel):
     predicted_demand: float
     safety_stock: float

@@ -33,8 +33,14 @@ FastAPI backend and an interactive React dashboard.
   - Stock status (HEALTHY / WARNING / CRITICAL), days of cover, recommended order qty
   - Potential lost revenue, used to **prioritize** which SKUs to reorder first.
 - **Interactive dashboard**: KPI cards, inventory-health distribution, feature
-  importance, model performance, a priority reorder table, and a **what-if
-  simulator** that runs a live forecast + reorder decision for any SKU.
+  importance, model performance, a **forecast-vs-actual time-series chart**, a
+  priority reorder table with **CSV export**, and a **what-if simulator** that
+  runs a live forecast + reorder decision for any SKU.
+- **AI insights**: a one-click plain-English operations briefing. Uses Claude
+  (`claude-opus-5-5` by default) when `ANTHROPIC_API_KEY` is set, and falls back
+  to a deterministic rule-based summary otherwise — so the demo always works.
+- **Bring your own data**: upload a retail CSV to train a fresh model on *your*
+  data and get your own R², demand drivers, and reorder plan in seconds.
 - **Reproducible** — a synthetic dataset generator recreates the schema of the
   Kaggle *Retail Store Inventory Forecasting* dataset, so the whole project runs
   end-to-end with zero external downloads.
@@ -106,6 +112,10 @@ docker run --rm -p 8000:7860 -e PORT=7860 scml-optimizer   # http://localhost:80
 | GET  | `/api/reorder-recommendations` | Top SKUs to reorder, ranked by revenue at risk |
 | GET  | `/api/filters` | Available stores / categories / statuses |
 | POST | `/api/simulate` | Live forecast + reorder decision for a single SKU |
+| GET  | `/api/forecast-series` | Actual vs. predicted demand over time for a SKU |
+| POST | `/api/analyze` | Train a fresh model on an uploaded CSV, return metrics |
+| GET  | `/api/sample-template` | Download a valid example CSV |
+| POST | `/api/insights` | AI-written (or rule-based) operations briefing |
 
 Interactive API docs are available at `/docs` (Swagger UI).
 

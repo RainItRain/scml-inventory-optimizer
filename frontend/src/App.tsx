@@ -6,6 +6,8 @@ import { StatusPie, FeatureImportanceChart, MetricsPanel } from "./components/Ch
 import ReorderTable from "./components/ReorderTable";
 import Simulator from "./components/Simulator";
 import DataUpload from "./components/DataUpload";
+import ForecastChart from "./components/ForecastChart";
+import AiInsights from "./components/AiInsights";
 
 const GITHUB_URL = "https://github.com/RainItRain/scml-inventory-optimizer";
 
@@ -86,6 +88,23 @@ export default function App() {
               <StatusPie k={metrics.kpis} />
               <FeatureImportanceChart m={metrics} />
               <MetricsPanel m={metrics} />
+            </section>
+
+            <section>
+              <AiInsights
+                payload={{
+                  r2: metrics.r2,
+                  mape: metrics.mape,
+                  kpis: metrics.kpis,
+                  feature_importance: metrics.feature_importance,
+                  recommendations: reorder,
+                  label: "the demo dataset",
+                }}
+              />
+            </section>
+
+            <section>
+              <ForecastChart />
             </section>
 
             <section>

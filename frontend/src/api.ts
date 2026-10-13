@@ -75,6 +75,23 @@ export interface AnalyzeResult extends Metrics {
   recommendations: InventoryItem[];
 }
 
+export interface SeriesKey {
+  store_id: string;
+  product_id: string;
+  points: number;
+}
+
+export interface ForecastPoint {
+  date: string;
+  actual: number;
+  predicted: number;
+}
+
+export interface InsightResult {
+  insight: string;
+  source: "claude" | "rule-based";
+}
+
 async function getJSON<T>(url: string): Promise<T> {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
@@ -119,4 +136,21 @@ export const api = {
     return res.json();
   },
   sampleTemplateUrl: "/api/sample-template",
+  seriesKeys: (limit = 40) =>
+    getJSON<{ items: SeriesKey[] }>(`/api/series-keys?limit=${limit}`),
+  forecastSeries: (storeId: string, productId: string) =>
+    getJSON<{ store_id: string; product_id: string; series: ForecastPoint[] }>(
+      `/api/forecast-series?store_id=${encodeURIComponent(
+        storeId
+      )}&product_id=${encodeURIComponent(productId)}`
+    ),
+  insights: async (payload: Record<string, unknown>): Promise<InsightResult> => {
+    const res = await fetch("/api/insights", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+    return res.json();
+  },
 };

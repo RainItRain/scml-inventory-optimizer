@@ -1,5 +1,27 @@
+import { Download } from "lucide-react";
 import type { InventoryItem } from "../api";
 import { STATUS_BADGE } from "../lib";
+
+function exportCsv(items: InventoryItem[]) {
+  if (!items.length) return;
+  const cols = Object.keys(items[0]);
+  const esc = (v: unknown) => {
+    const s = String(v ?? "");
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const csv = [
+    cols.join(","),
+    ...items.map((row) =>
+      cols.map((c) => esc((row as unknown as Record<string, unknown>)[c])).join(",")
+    ),
+  ].join("\n");
+  const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "reorder_recommendations.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 function Badge({ status }: { status: string }) {
   return (
@@ -18,9 +40,16 @@ export default function ReorderTable({ items }: { items: InventoryItem[] }) {
         <h3 className="text-sm font-semibold text-slate-200">
           Priority Reorder Recommendations
         </h3>
-        <span className="text-xs text-slate-400">
-          ranked by revenue at risk
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-slate-400">ranked by revenue at risk</span>
+          <button
+            onClick={() => exportCsv(items)}
+            disabled={!items.length}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 disabled:opacity-50 px-2.5 py-1 text-xs font-medium text-slate-100 transition"
+          >
+            <Download size={13} /> Export CSV
+          </button>
+        </div>
       </div>
       <div className="overflow-x-auto scroll-thin">
         <table className="w-full text-sm">

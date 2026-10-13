@@ -27,7 +27,13 @@ from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
 
 from .analyze import AnalyzeError, analyze_dataframe, sample_template_csv
-from .schemas import Metrics, SimulationRequest, SimulationResponse
+from .insights import generate_insight
+from .schemas import (
+    InsightRequest,
+    Metrics,
+    SimulationRequest,
+    SimulationResponse,
+)
 
 MAX_UPLOAD_BYTES = 25 * 1024 * 1024  # 25 MB
 
@@ -204,6 +210,46 @@ def _ensure_loaded() -> None:
         store.load()
     except FileNotFoundError as exc:
         raise HTTPException(status_code=503, detail=str(exc))
+
+
+@app.get("/api/series-keys")
+def series_keys(limit: int = Query(40, ge=1, le=200)) -> dict:
+    """Store-product pairs available for the forecast chart, by number of points."""
+    _ensure_loaded()
+    df = store.results
+    counts = (
+        df.groupby(["Store ID", "Product ID"]).size()
+        .reset_index(name="points").sort_values("points", ascending=False)
+    )
+    items = [
+        {"store_id": r["Store ID"], "product_id": r["Product ID"], "points": int(r["points"])}
+        for _, r in counts.head(limit).iterrows()
+    ]
+    return {"items": items}
+
+
+@app.get("/api/forecast-series")
+def forecast_series(store_id: str, product_id: str) -> dict:
+    """Actual vs. predicted demand over time for one store-product series."""
+    _ensure_loaded()
+    df = store.results
+    sel = df[(df["Store ID"] == store_id) & (df["Product ID"] == product_id)]
+    if sel.empty:
+        raise HTTPException(status_code=404, detail="No data for that store/product.")
+    sel = sel.sort_values("Date")
+    series = [
+        {"date": str(r["Date"])[:10],
+         "actual": round(float(r["Actual_Sales"]), 1),
+         "predicted": round(float(r["Predicted_Demand"]), 1)}
+        for _, r in sel.iterrows()
+    ]
+    return {"store_id": store_id, "product_id": product_id, "series": series}
+
+
+@app.post("/api/insights")
+def insights(req: InsightRequest) -> dict:
+    """AI-written (or rule-based fallback) operations briefing for a snapshot."""
+    return generate_insight(req.model_dump())
 
 
 @app.get("/api/sample-template")
