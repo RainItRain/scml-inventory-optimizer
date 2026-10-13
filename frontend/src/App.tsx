@@ -8,6 +8,7 @@ import Simulator from "./components/Simulator";
 import DataUpload from "./components/DataUpload";
 import ForecastChart from "./components/ForecastChart";
 import AiInsights from "./components/AiInsights";
+import Overview from "./components/Overview";
 
 const GITHUB_URL = "https://github.com/RainItRain/scml-inventory-optimizer";
 
@@ -61,6 +62,8 @@ export default function App() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        <Overview />
+
         {error && (
           <div className="rounded-xl bg-red-500/10 ring-1 ring-red-500/30 p-4 text-sm text-red-300">
             Could not reach the API ({error}). Make sure the backend is running
